@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <div class="container">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <p id="responseMessage"></p>
+        </div>
+    
+        <div class="container">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p id="loginResponse"></p>
+        </div>
+    
+        <div class="container">
+            <h2>Delete Account</h2>
+            <form id="deleteForm">
+                <input type="email" id="deleteEmail" placeholder="Enter your email" required>
+                <button type="submit">Delete Account</button>
+            </form>
+            <p id="deleteResponse"></p>
+        </div>
+    
+        <div class="container">
+            <h2>Update User</h2>
+            <button onclick="updateUser('username')">Update Username</button>
+            <button onclick="updateUser('email')">Update Email</button>
+            <button onclick="updateUser('password')">Update Password</button>
+        </div>
+
+        <h2>Upload Images</h2>
+        <form id="uploadForm">
+            <input type="email" id="userEmail" placeholder="Enter your email" required>
+            <input type="file" id="imageFile" accept="image/*" multiple required>
+            <button type="submit">Upload</button>
+        </form>
+        <p id="uploadMessage"></p>
+        
+        <h2>Uploaded Images</h2>
+        <div id="uploadedImagesContainer"></div>
+        
+        <h2>Download Image</h2>
+        <form id="downloadForm">
+            <input type="email" id="downloadEmail" placeholder="Enter your email" required>
+            <input type="url" id="downloadUrl" placeholder="Enter image URL to save" required>
+            <button type="submit">Save to Downloads</button>
+        </form>
+        <p id="downloadMessage"></p>
+        
+        <h2>Downloaded Images</h2>
+        <div id="downloadedImagesContainer"></div>
+    
+        <script src="script.js"></script>
+    </body>
+</html>
