@@ -68,6 +68,19 @@
         
         <h2>Downloaded Images</h2>
         <div id="downloadedImagesContainer"></div>
+
+        <h1>Generate AI Images</h1>
+        <input type="text" id="prompt" placeholder="Enter a prompt..." />
+        <button onclick="generateImage()">Generate</button>
+        <br>
+        <img id="outputImage" src="" alt="Generated Image" style="display:none;">
+
+            <h2>Upload Image</h2>
+    <form id="uploadForm">
+        <input type="text" id="username" placeholder="Enter username" required>
+        <input type="file" id="imageInput" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
     
         <script src="script.js"></script>
     </body>
