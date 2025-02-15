@@ -143,3 +143,72 @@ function displayImages(imageUrls, containerId) {
         container.appendChild(img);
     });
 }
+
+async function generateImage() {
+    const prompt = document.getElementById("prompt").value;
+    if (!prompt) {
+        alert("Please enter a prompt!");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/generate", {  // Correct Flask URL
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt }) 
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.image_url) {
+            document.getElementById("outputImage").src = data.image_url;
+            document.getElementById("outputImage").style.display = "block";
+        } else {
+            alert("Error generating image.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Check the console for details.");
+    }
+}
+
+        document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const imageInput = document.getElementById("imageInput").files[0];
+
+            if (!username || !imageInput) {
+                alert("Please enter a username and select an image.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("username", username);
+            formData.append("image", imageInput);
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to upload image.");
+            }
+        });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const generateBtn = document.getElementById("generateBtn");
+    if (generateBtn) {
+        generateBtn.addEventListener("click", generateImage);
+    } else {
+        console.error("Button not found. Check your HTML.");
+    }
+});
