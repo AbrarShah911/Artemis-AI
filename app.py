@@ -12,6 +12,7 @@ CORS(app)
 cred = credentials.Certificate(r"/Users/syed/Desktop/ARTEMIS-AI/artemis-ai-c9143-firebase-adminsdk-fbsvc-84bc5c0417.json")
 firebase_admin.initialize_app(cred)
 
+
 db = firestore.client() #Initialized database as a firebase, firestore database
 bucket = storage.bucket()  # Get Firebase Storage bucket
 
