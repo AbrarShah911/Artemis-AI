@@ -194,7 +194,7 @@ def save_downloaded_image():
         return jsonify({"error": str(e)}), 500
         return jsonify({"error": str(e)}), 500
 
-token = os.getenv("HUGGINGFACE_TOKEN")    
+token = os.getenv("HUGGINGFACE_TOKEN") #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 
 API_KEY = token
 URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
 HEADERS = {"Authorization": f"Bearer {API_KEY}"}
