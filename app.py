@@ -194,5 +194,78 @@ def save_downloaded_image():
         return jsonify({"error": str(e)}), 500
         return jsonify({"error": str(e)}), 500
 
+token = os.getenv("HUGGINGFACE_TOKEN")    
+API_KEY = token
+URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5"
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+
+def generate_image(prompt):
+    """Send a request to the Hugging Face API to generate an image based on the prompt."""
+    payload = {"inputs": prompt}
+    response = requests.post(URL, headers=HEADERS, json=payload)
+
+    if response.status_code == 200:
+        output_path = os.path.join("static", "output.png")
+        with open(output_path, "wb") as f:
+            f.write(response.content)
+        return output_path
+    else:
+        return None
+
+@app.route("/")
+def home():
+    """Serve the frontend HTML."""
+    return render_template("index.html")
+
+@app.route("/generate", methods=["POST"])
+def generate():
+    """API endpoint to generate an image from a text prompt."""
+    data = request.get_json()  # Use get_json() to properly parse JSON data
+    prompt = data.get("prompt")
+
+    if not prompt:
+        return jsonify({"error": "Prompt is required"}), 400
+
+    image_path = generate_image(prompt)
+
+    if image_path:
+        return jsonify({"image_url": "/static/output.png"})
+    else:
+        return jsonify({"error": "Failed to generate image"}), 500
+
+
+@app.route('/static/images/<path:filename>')
+def serve_static(filename):
+    """Serve static files."""
+    return send_from_directory('static', filename)
+
+IMAGE_SAVE_PATH = r"/Users/syed/Desktop/ARTEMIS-AI/static/images"
+os.makedirs(IMAGE_SAVE_PATH, exist_ok=True)
+
+@app.route('/save_image', methods=['POST'])
+def save_image():
+    try:
+        data = request.json
+        user_id = data.get("user_id")
+        image_data = data.get("image")  # Base64 encoded image string
+        image_name = data.get("image_name", "image.png")
+        
+        if not user_id or not image_data:
+            return jsonify({"error": "Missing user_id or image data"}), 400
+        
+        # Decode and save the image locally
+        image_path = os.path.join(IMAGE_SAVE_PATH, f"{user_id}_{image_name}")
+        with open(image_path, "wb") as img_file:
+            img_file.write(base64.b64decode(image_data))
+        
+        # Store image path in Firestore under the user's collection
+        user_ref = db.collection("users").document(user_id)
+        user_images_ref = user_ref.collection("images")
+        user_images_ref.add({"image_path": image_path})
+        
+        return jsonify({"message": "Image saved successfully", "image_path": image_path})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
