@@ -14,7 +14,6 @@ firebase_admin.initialize_app(cred)
 
 
 db = firestore.client() #Initialized database as a firebase, firestore database
-bucket = storage.bucket()  # Get Firebase Storage bucket
 
 # APP REGISTER
 @app.route('/register', methods=['POST'])
@@ -147,52 +146,52 @@ def update_user():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/upload', methods=['POST'])
-def upload_images():
-    try:
-        if 'images' not in request.files or 'email' not in request.form:
-            return jsonify({"error": "Missing images or email"}), 400
+# @app.route('/upload', methods=['POST'])
+# def upload_images():
+#     try:
+#         if 'images' not in request.files or 'email' not in request.form:
+#             return jsonify({"error": "Missing images or email"}), 400
 
-        user_email = request.form['email']
-        files = request.files.getlist('images')  # Get multiple files
+#         user_email = request.form['email']
+#         files = request.files.getlist('images')  # Get multiple files
 
-        uploaded_urls = []
+#         uploaded_urls = []
 
-        for file in files:
-            filename = str(uuid.uuid4()) + "-" + file.filename
-            blob = bucket.blob(f"uploads/{filename}")
-            blob.upload_from_file(file)
-            blob.make_public()
-            uploaded_urls.append(blob.public_url)
+#         for file in files:
+#             filename = str(uuid.uuid4()) + "-" + file.filename
+#             blob = bucket.blob(f"uploads/{filename}")
+#             blob.upload_from_file(file)
+#             blob.make_public()
+#             uploaded_urls.append(blob.public_url)
 
-        # Update Firestore: Add images to the user's `uploaded_images` array
-        user_ref = db.collection("users").document(user_email)
-        user_ref.set({"uploaded_images": firestore.ArrayUnion(uploaded_urls)}, merge=True)
+#         # Update Firestore: Add images to the user's `uploaded_images` array
+#         user_ref = db.collection("users").document(user_email)
+#         user_ref.set({"uploaded_images": firestore.ArrayUnion(uploaded_urls)}, merge=True)
 
-        return jsonify({"message": "Images uploaded successfully", "uploaded_images": uploaded_urls}), 201
+#         return jsonify({"message": "Images uploaded successfully", "uploaded_images": uploaded_urls}), 201
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
 
-@app.route('/download', methods=['POST'])
-def save_downloaded_image():
-    try:
-        data = request.get_json()
-        if "email" not in data or "image_url" not in data:
-            return jsonify({"error": "Missing email or image URL"}), 400
+# @app.route('/download', methods=['POST'])
+# def save_downloaded_image():
+#     try:
+#         data = request.get_json()
+#         if "email" not in data or "image_url" not in data:
+#             return jsonify({"error": "Missing email or image URL"}), 400
 
-        user_email = data["email"]
-        image_url = data["image_url"]
+#         user_email = data["email"]
+#         image_url = data["image_url"]
 
-        # Update Firestore: Add image URL to the user's `downloaded_images` array
-        user_ref = db.collection("users").document(user_email)
-        user_ref.set({"downloaded_images": firestore.ArrayUnion([image_url])}, merge=True)
+#         # Update Firestore: Add image URL to the user's `downloaded_images` array
+#         user_ref = db.collection("users").document(user_email)
+#         user_ref.set({"downloaded_images": firestore.ArrayUnion([image_url])}, merge=True)
 
-        return jsonify({"message": "Image saved to downloads", "downloaded_images": [image_url]}), 201
+#         return jsonify({"message": "Image saved to downloads", "downloaded_images": [image_url]}), 201
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-        return jsonify({"error": str(e)}), 500
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+#         return jsonify({"error": str(e)}), 500
 
 token = os.getenv("HUGGINGFACE_TOKEN") #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 
 API_KEY = token
